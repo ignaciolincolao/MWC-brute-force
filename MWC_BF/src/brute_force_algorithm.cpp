@@ -10,8 +10,8 @@ int main() {
     ifstream file("votes.json");
     json data = json::parse(file);
 
-    int n = data["votes"].size();
-    n = 30;
+    int n = data["rollcalls"][0]["votes"].size();
+    n = 20;
     int quorum = trunc(n / 2)+1;
     // Initialize the distance matrix
     double** distance_matrix = (double**)malloc(n * sizeof(double*));
@@ -25,7 +25,7 @@ int main() {
     {
         for (size_t j = 0; j < n; j++)
         {
-            distance_matrix[i][j] = euclidian_distance(data["votes"][i]["x"], data["votes"][i]["y"], data["votes"][j]["x"], data["votes"][j]["y"]);
+            distance_matrix[i][j] = euclidian_distance(data["rollcalls"][0]["votes"][i]["x"], data["rollcalls"][0]["votes"][i]["y"], data["rollcalls"][0]["votes"][j]["x"], data["rollcalls"][0]["votes"][j]["y"]);
         }
     }
     // Time variable initialization for execution calculation

@@ -29,13 +29,11 @@ double euclidian_distance(double x1, double y1, double x2, double y2)
 double evaluate_solution(vector<int> pos, double** mat, int length)
 {
 	double sum = 0;
-	double val;
-	for (size_t i = 0; i <= (pos.size()-2); i++)
+	for (size_t i = 0; i <= (length - 2); i++)
 	{
-		for (size_t j = i + 1; j <= (pos.size() - 1); j++)
+		for (size_t j = i + 1; j <= (length - 1); j++)
 		{
-			val = mat[pos[i]][pos[j]];
-			sum = sum + val;
+			sum = sum + mat[pos[i]][pos[j]];
 		}
 	}
 	return sum;
@@ -56,7 +54,7 @@ tuple<double, int*> comb(int N, int K, double** distance_matrix)
 		{
 			if (bitmask[i]) combination.push_back(i);
 		}
-		tempFitness = evaluate_solution(combination, distance_matrix, N);
+		tempFitness = evaluate_solution(combination, distance_matrix, K);
 		if (tempFitness < fitness)
 		{
 			fitness = tempFitness;
