@@ -11,10 +11,20 @@ int main() {
     json data = json::parse(file);
 
     int n = data["rollcalls"][0]["votes"].size();
-    n = 20;
+    n = 25;
     int quorum = trunc(n / 2)+1;
     // Initialize the distance matrix
     double** distance_matrix = (double**)malloc(n * sizeof(double*));
+    // Crea archivo
+    ofstream point_file;
+    point_file.open("points.txt");
+    for (size_t i = 0; i < n; i++)
+    {
+        point_file << data["rollcalls"][0]["votes"][i]["x"] << "," << data["rollcalls"][0]["votes"][i]["y"] << endl;
+    }
+    point_file.close();    
+
+
     for (size_t i = 0; i < n; i++)
     {
         distance_matrix[i] = (double*)malloc(n * sizeof(double));
