@@ -9,7 +9,7 @@ using json = nlohmann::json;
 int main() {
     int n = 25;
     float new_data[n][2];
-    std::ifstream file("Dataset_445_222_223_seed-2.csv");
+    std::ifstream file("Dataset_25_12_13_seed-7.csv");
     std::string   line;
     int count = 0;
     while(std::getline(file, line) && count < n)
