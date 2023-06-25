@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required(VERSION 3.0.0)
 if (WIN32)
     find_package(CUDAToolkit)
     set(CMAKE_CUDA_ARCHITECTURES 52 60 61 75 86)
@@ -26,11 +26,14 @@ file(GLOB all_SRCS
 	"${PROJECT_SOURCE_DIR}/src/*.cu"
 )
 
-file(GLOB all_DATA
-	"${PROJECT_SOURCE_DIR}/data/*.json"
-)
 # Agregue un origen al ejecutable de este proyecto.
-add_executable (brute_force_algorithm ${all_SRCS} ${all_DATA})
+add_executable (brute_force_algorithm ${all_SRCS})
+
+# Copiar carpeta data
+add_custom_command(TARGET brute_force_algorithm PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:brute_force_algorithm>/data)
+
 include(FetchContent)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz)
@@ -59,6 +62,4 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
 include(CPack)
-
-file(COPY ${all_DATA} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 

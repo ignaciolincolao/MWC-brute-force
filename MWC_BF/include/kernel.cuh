@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <stdio.h>
-#include <cuda.cuh>
+#include <cuda.h>
 
 using namespace std;
 
