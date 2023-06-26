@@ -1,27 +1,35 @@
 #include <kernel.cuh>
 
-__device__ double evaluate_solution_GPU(int* pos, double* mat, int length, int mat_dim) {
-    double sum = 0.0;
-    for (int i = 0; i <= length - 2; i++) {
-        for (int j = i + 1; j <= length - 1; j++) {
-            int idx1 = pos[i] * mat_dim + pos[j];
-            sum += mat[idx1];
-        }
+
+
+
+__device__ float distanciaR2(float x1, float y1, float x2, float y2) {
+    return sqrtf((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+}
+
+__global__ void computeDistMatrix(float *X, float *Y, float *distMatrix_device, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (i < n && j < n) {
+        distMatrix_device[i * n + j] = distanciaR2(X[i], Y[i], X[j], Y[j]);
     }
-    return sum;
 }
 
-__device__ double euclidian_distance_GPU(double x1, double y1, double x2, double y2)
-{
-	double calculation = pow(pow((x2 - x1), 2) + pow((y2 - y1), 2), 1 / (double)2);
-	return calculation;
-}
 
-__global__ void calculate_distances(double* new_data, double* distance_matrix, int n) {
-    int i = threadIdx.x + blockIdx.x * blockDim.x;
-    if (i < n) {
-        for (int j = 0; j < n; j++) {
-            distance_matrix[i * n + j] = euclidian_distance_GPU(new_data[i * 2 + 0], new_data[i * 2 + 1], new_data[j * 2 + 0], new_data[j * 2 + 1]);
+__global__ void evaluate_solution_kernel(int *matrixSolution_device, float *distMatrix_device, float *fitness_device, int nQuorum, int nData, int nSolution){
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+
+    // Ensure we don't go out of bounds
+    if (idx < nSolution) {
+        float sum = 0.0f;
+        for (int i = 0; i < nQuorum - 1; ++i) {
+            for (int j = i + 1; j < nQuorum; ++j) {
+                int pos_i = matrixSolution_device[idx * nQuorum + i];
+                int pos_j = matrixSolution_device[idx * nQuorum + j];
+                sum += distMatrix_device[pos_i * nData + pos_j];
+            }
         }
+        fitness_device[idx] = sum;
     }
 }

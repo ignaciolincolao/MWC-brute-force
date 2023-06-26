@@ -6,8 +6,7 @@
 #include <cuda.h>
 
 using namespace std;
-
-__device__ double evaluate_solution_GPU(int* pos, double* mat, int length, int mat_dim);
-__device__ double euclidian_distance_GPU(double x1, double y1, double x2, double y2);
-__global__ void calculate_distances(double* new_data, double* distance_matrix, int n);
+__global__ void computeDistMatrix(float *X, float *Y, float *distMatrix_device, int n);
+__device__ float distanciaR2(float x1, float y1, float x2, float y2);
+__global__ void evaluate_solution_kernel(int *matrixSolution_device, float *distMatrix_device, float *fitness_device, int nQuorum, int nData, int nSolution); 
 #endif

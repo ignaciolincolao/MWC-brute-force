@@ -50,7 +50,6 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
 target_compile_options(brute_force_algorithm PRIVATE $<$<COMPILE_LANGUAGE:CUDA>: -lineinfo --default-stream per-thread 
             --expt-relaxed-constexpr
-            -maxrregcount=64
             -Xptxas 
             -dlcm=cg
             -ftz=true 
