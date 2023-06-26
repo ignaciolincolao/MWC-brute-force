@@ -50,6 +50,7 @@ void Coalition::BestSolution(){
     cudaGetDevice(&device); // get the current device id
     cudaGetDeviceProperties(&prop, device);
     int count = 0;
+    long long int count_calc = 0;
     do {
         for (int i = 0; i < nData; ++i) { // [0..N-1] integers
             if (bitmask[i]) combination.push_back(i);
@@ -72,6 +73,8 @@ void Coalition::BestSolution(){
             find_min_index(nSolution, count);
             CHECK_CUDA_ERRORS(cudaGetLastError());
             CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
+            count=0;
+            count_calc++;
         }
     } while (prev_permutation(bitmask.begin(), bitmask.end()));
 

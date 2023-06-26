@@ -17,13 +17,15 @@ using namespace std;
 
 int main() {
 
-    Dataset DATOS("data/test/Dataset_25_12_13_seed-7.csv");
+    //Dataset DATOS("data/test/Dataset_25_12_13_seed-7.csv");
+    //Dataset DATOS("data/test/points_100.txt");
+    Dataset DATOS("data/test/points_40.txt");
     //Dataset DATOS("data/votes.json","JSON");
     DATOS.printXY();
     cout << DATOS.getDistanciaHost(0,1) << " - " << DATOS.getDistanciaDevice(0,1) << endl;
     int quorum = trunc(DATOS.X.size() / 2)+1;
 
-    Coalition COALITION(quorum,DATOS.X.size(),DATOS.distMatrix_device,512,32); 
+    Coalition COALITION(quorum,DATOS.X.size(),DATOS.distMatrix_device,32,1024); 
 
     // Time variable initialization for execution calculation
     auto initial_time = chrono::high_resolution_clock::now();
@@ -47,7 +49,7 @@ int main() {
 
 
     ofstream result_file;
-    result_file.open("result_"+ std::to_string(DATOS.X.size() )+".txt");
+    result_file.open("../data/result/result_"+ std::to_string(DATOS.X.size() )+".txt");
     result_file << "Time:"<< fixed << time_taken << setprecision(9) << endl;
     result_file << "Minimum Fitness:" << COALITION.bestFitness << endl;
     result_file << "Coalition:" << endl;
