@@ -16,7 +16,6 @@ using namespace std;
 
 
 int main() {
-
     //Dataset DATOS("data/test/Dataset_25_12_13_seed-7.csv");
     //Dataset DATOS("data/test/points_100.txt");
     Dataset DATOS("data/test/points_40.txt");
@@ -25,7 +24,7 @@ int main() {
     cout << DATOS.getDistanciaHost(0,1) << " - " << DATOS.getDistanciaDevice(0,1) << endl;
     int quorum = trunc(DATOS.X.size() / 2)+1;
 
-    Coalition COALITION(quorum,DATOS.X.size(),DATOS.distMatrix_device,32,1024); 
+    Coalition COALITION(quorum,DATOS.X.size(),DATOS.distMatrix_device,1024,1024); 
 
     // Time variable initialization for execution calculation
     auto initial_time = chrono::high_resolution_clock::now();
@@ -49,9 +48,10 @@ int main() {
 
 
     ofstream result_file;
-    result_file.open("../data/result/result_"+ std::to_string(DATOS.X.size() )+".txt");
+    result_file.open("../data/result/result_"+ std::to_string(DATOS.X.size() )+std::to_string(time(0))+".txt");
     result_file << "Time:"<< fixed << time_taken << setprecision(9) << endl;
     result_file << "Minimum Fitness:" << COALITION.bestFitness << endl;
+    result_file << "N_BLOCK: " << COALITION.nBlock << " N_THREADS:" << COALITION.nThread << endl;
     result_file << "Coalition:" << endl;
     for (size_t i = 0; i < quorum; i++)
     {

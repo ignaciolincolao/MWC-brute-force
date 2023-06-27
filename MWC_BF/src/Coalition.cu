@@ -52,6 +52,7 @@ void Coalition::BestSolution(){
     int count = 0;
     long long int count_calc = 0;
     do {
+
         for (int i = 0; i < nData; ++i) { // [0..N-1] integers
             if (bitmask[i]) combination.push_back(i);
         }
@@ -61,6 +62,7 @@ void Coalition::BestSolution(){
         count++;
     
         if (count % nSolution == 0) {
+            //auto initial_time = chrono::high_resolution_clock::now();
             CHECK_CUDA_ERRORS(cudaMemcpy(matrixSolution_device, matrixSolution_host, nQuorum * nSolution * sizeof(int), cudaMemcpyHostToDevice));
             CHECK_CUDA_ERRORS(cudaGetLastError());
             CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
@@ -70,11 +72,17 @@ void Coalition::BestSolution(){
             evaluate_solution_kernel<<<blocksPerGrid, threadsPerBlock>>>(matrixSolution_device, distMatrix_device, fitness_device, nQuorum, nData, nSolution);
             CHECK_CUDA_ERRORS(cudaGetLastError());
             CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
-            find_min_index(nSolution, count);
+            find_min_index(nSolution, count, count_calc);
             CHECK_CUDA_ERRORS(cudaGetLastError());
             CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
             count=0;
             count_calc++;
+            //cout << count_calc << endl;
+            //auto final_time = chrono::high_resolution_clock::now();
+            //double time_taken = chrono::duration_cast<chrono::nanoseconds>(final_time - initial_time).count();
+            //time_taken *= 1e-9;
+            //cout << "Time:"<< fixed << time_taken << setprecision(9) << count_calc << endl;
+            //cout << "Coalition:" << endl;
         }
     } while (prev_permutation(bitmask.begin(), bitmask.end()));
 
@@ -87,14 +95,14 @@ void Coalition::BestSolution(){
     evaluate_solution_kernel<<<blocksPerGrid, threadsPerBlock>>>(matrixSolution_device, distMatrix_device, fitness_device, nQuorum, nData, nSolution);
     CHECK_CUDA_ERRORS(cudaGetLastError());
     CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
-    find_min_index(nSolution, count);
+    find_min_index(nSolution, count,count_calc);
     CHECK_CUDA_ERRORS(cudaGetLastError());
     CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 	cout << "Combinaciones:" << count<<endl;
 }
 
 
-void Coalition::find_min_index(int n, int count) {
+void Coalition::find_min_index(int n, int count,int count_calc) {
     thrust::device_ptr<float> fitness_device_ptr(fitness_device);
 
     thrust::device_ptr<float> min_ptr = thrust::min_element(fitness_device_ptr, fitness_device_ptr + n);
@@ -104,7 +112,7 @@ void Coalition::find_min_index(int n, int count) {
     if(min_value < bestFitness){
         bestFitness = min_value;
         CHECK_CUDA_ERRORS(cudaMemcpy(&bestSolution[0], matrixSolution_device + min_index * nQuorum, nQuorum * sizeof(int), cudaMemcpyDeviceToHost));
-        cout << count  << " || " << bestFitness << endl;
+        cout << count  << " || " <<  count_calc << " || " << bestFitness << endl;
     }
 }
 
