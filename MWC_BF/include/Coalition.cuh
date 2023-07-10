@@ -36,7 +36,9 @@ public:
     Coalition(int nQuorum, int nData,float *distMatrix_device, int nBlock, int nThread);
     ~Coalition();
     void BestSolution();
+    void BestSolution2();
     void find_min_index(int n, int count, int count_calc);
+    void find_min_index2(int n, int count, int count_calc);
 };
 
 #endif

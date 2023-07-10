@@ -48,13 +48,13 @@ set_property(TARGET brute_force_algorithm PROPERTY CUDA_SEPARABLE_COMPILATION ON
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
-target_compile_options(brute_force_algorithm PRIVATE $<$<COMPILE_LANGUAGE:CUDA>: -lineinfo --default-stream per-thread 
-            --expt-relaxed-constexpr
-            -Xptxas 
-            -dlcm=cg
-            -ftz=true 
-            -prec-div=false 
-            -prec-sqrt=false>) 
+#target_compile_options(brute_force_algorithm PRIVATE $<$<COMPILE_LANGUAGE:CUDA>: -lineinfo --default-stream per-thread 
+#            --expt-relaxed-constexpr
+#            -Xptxas 
+#            -dlcm=cg
+#            -ftz=true 
+#            -prec-div=false 
+#            -prec-sqrt=false>) 
 
 # Gprof 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")

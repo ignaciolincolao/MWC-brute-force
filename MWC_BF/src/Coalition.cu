@@ -70,6 +70,7 @@ void Coalition::BestSolution(){
             int blocksPerGrid = nBlock;
             //cout << "block: " << blocksPerGrid << " - " << count << endl;
             evaluate_solution_kernel<<<blocksPerGrid, threadsPerBlock>>>(matrixSolution_device, distMatrix_device, fitness_device, nQuorum, nData, nSolution);
+            //evaluate_solution_kernel_v2<<<blocksPerGrid, threadsPerBlock, nData*nData*sizeof(float)>>>(matrixSolution_device, distMatrix_device, fitness_device, nQuorum, nData, nSolution);
             CHECK_CUDA_ERRORS(cudaGetLastError());
             CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
             find_min_index(nSolution, count, count_calc);
@@ -102,6 +103,34 @@ void Coalition::BestSolution(){
 }
 
 
+void Coalition::BestSolution2(){
+    cudaDeviceProp prop;
+    int device;
+    cudaGetDevice(&device); // get the current device id
+    cudaGetDeviceProperties(&prop, device);
+    int count = 0;
+    int batchSize = nBlock * nThread;  // Number of solutions per batch
+    int numBatches = (nSolution + batchSize - 1) / batchSize;  // Number of batches
+    long long int count_calc = 0;
+    int n =nData;
+    int k =nQuorum;
+    cout << n << " - " << k << endl;
+    for (int batchIdx = 0; batchIdx < numBatches; ++batchIdx) {
+        evaluate_solution_kernel_v3<<<nBlock, nThread>>>(n, k, distMatrix_device, fitness_device, nSolution, batchIdx);
+        cudaDeviceSynchronize();  // Wait for the kernel to finish
+        CHECK_CUDA_ERRORS(cudaGetLastError());
+        CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
+        find_min_index(nSolution, count, count_calc);
+        CHECK_CUDA_ERRORS(cudaGetLastError());
+        CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
+        count=0;
+        count_calc++;
+    }
+
+	cout << "Combinaciones:" << count<<endl;
+}
+
+
 void Coalition::find_min_index(int n, int count,int count_calc) {
     thrust::device_ptr<float> fitness_device_ptr(fitness_device);
 
@@ -112,6 +141,21 @@ void Coalition::find_min_index(int n, int count,int count_calc) {
     if(min_value < bestFitness){
         bestFitness = min_value;
         CHECK_CUDA_ERRORS(cudaMemcpy(&bestSolution[0], matrixSolution_device + min_index * nQuorum, nQuorum * sizeof(int), cudaMemcpyDeviceToHost));
+        cout << count  << " || " <<  count_calc << " || " << bestFitness << endl;
+    }
+}
+
+
+void Coalition::find_min_index2(int n, int count,int count_calc) {
+    thrust::device_ptr<float> fitness_device_ptr(fitness_device);
+
+    thrust::device_ptr<float> min_ptr = thrust::min_element(fitness_device_ptr, fitness_device_ptr + n);
+
+    int min_index = thrust::distance(fitness_device_ptr, min_ptr);
+    float min_value = *min_ptr;
+    if(min_value < bestFitness){
+        bestFitness = min_value;
+        //CHECK_CUDA_ERRORS(cudaMemcpy(&bestSolution[0], matrixSolution_device + min_index * nQuorum, nQuorum * sizeof(int), cudaMemcpyDeviceToHost));
         cout << count  << " || " <<  count_calc << " || " << bestFitness << endl;
     }
 }

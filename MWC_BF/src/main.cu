@@ -15,26 +15,37 @@
 using namespace std;
 
 
-int main() {
-    //Dataset DATOS("data/test/Dataset_25_12_13_seed-7.csv");
+int main(int argc, char* argv[]){
+    if (argc < 5) {
+        std::cout << "Faltan argumentos. Uso: programa <nombre> <puntos> <puntos_izq> <puntos_der>\n";
+        return 1;
+    }
+
+    std::string nombre = argv[1];
+    int puntos = std::stoi(argv[2]);
+    int puntos_izq = std::stoi(argv[3]);
+    int puntos_der = std::stoi(argv[4]);
+    std::string mseed = argv[5];
+
+    cout << mseed << endl;
+    Dataset DATOS(nombre);
     //Dataset DATOS("data/test/points_100.txt");
-    Dataset DATOS("data/test/points_40.txt");
+    //Dataset DATOS("data/test/points_40.txt");
     //Dataset DATOS("data/votes.json","JSON");
     DATOS.printXY();
     cout << DATOS.getDistanciaHost(0,1) << " - " << DATOS.getDistanciaDevice(0,1) << endl;
     int quorum = trunc(DATOS.X.size() / 2)+1;
 
     Coalition COALITION(quorum,DATOS.X.size(),DATOS.distMatrix_device,1024,1024); 
-
+    //Coalition COALITION(quorum,DATOS.X.size(),DATOS.distMatrix_device,5078,1024); 
     // Time variable initialization for execution calculation
     auto initial_time = chrono::high_resolution_clock::now();
     cout << "Generando combinatoria!" << endl;
     COALITION.BestSolution();
-    // Stop the clock
+
     auto final_time = chrono::high_resolution_clock::now();
     double time_taken = chrono::duration_cast<chrono::nanoseconds>(final_time - initial_time).count();
 
-    // Convert the time taken by the algorithm to seconds
 
 
     time_taken *= 1e-9;
@@ -48,7 +59,7 @@ int main() {
 
 
     ofstream result_file;
-    result_file.open("../data/result/result_"+ std::to_string(DATOS.X.size() )+std::to_string(time(0))+".txt");
+    result_file.open("../data/result/"+std::to_string(puntos)+"/"+std::to_string(puntos)+"_"+std::to_string(puntos_izq)+"_"+std::to_string(puntos_der)+"_"+"_seed_"+mseed+"_result_"+ std::to_string(DATOS.X.size() )+"_"+std::to_string(time(0))+"p.txt");
     result_file << "Time:"<< fixed << time_taken << setprecision(9) << endl;
     result_file << "Minimum Fitness:" << COALITION.bestFitness << endl;
     result_file << "N_BLOCK: " << COALITION.nBlock << " N_THREADS:" << COALITION.nThread << endl;
