@@ -1,4 +1,4 @@
-Time:998.081972
+Time:1012.288267
 Minimum Fitness:43.184520721
 N_BLOCK: 1024 N_THREADS:1024
 Coalition:
