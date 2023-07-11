@@ -4,7 +4,7 @@
 
 cd build
 compilado="./brute_force_algorithm"
-datos="../data/test/40/"
+datos="../data/test/36/"
 
 
 # Leer cada archivo en el directorio

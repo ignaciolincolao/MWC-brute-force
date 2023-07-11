@@ -1,0 +1,5 @@
+Time:0.761419
+Minimum Fitness:19.508728027
+N_BLOCK: 1024 N_THREADS:1024
+Coalition:
+0,1,2,3,4,5,6,7,8,9,10,11,12,

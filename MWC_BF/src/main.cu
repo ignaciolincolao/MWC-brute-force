@@ -59,7 +59,7 @@ int main(int argc, char* argv[]){
 
 
     ofstream result_file;
-    result_file.open("../data/result/"+std::to_string(puntos)+"/"+std::to_string(puntos)+"_"+std::to_string(puntos_izq)+"_"+std::to_string(puntos_der)+"_"+"_seed_"+mseed+"_result_"+ std::to_string(DATOS.X.size() )+"_"+std::to_string(time(0))+"p.txt");
+    result_file.open("../data/result/"+std::to_string(puntos)+"_"+std::to_string(puntos_izq)+"_"+std::to_string(puntos_der)+"_"+"_seed_"+mseed+"_result_"+ std::to_string(DATOS.X.size() )+"_"+std::to_string(time(0))+"p.txt");
     result_file << "Time:"<< fixed << time_taken << setprecision(9) << endl;
     result_file << "Minimum Fitness:" << COALITION.bestFitness << endl;
     result_file << "N_BLOCK: " << COALITION.nBlock << " N_THREADS:" << COALITION.nThread << endl;
