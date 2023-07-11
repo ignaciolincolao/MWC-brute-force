@@ -16,16 +16,14 @@ using namespace std;
 
 
 int main(int argc, char* argv[]){
-    if (argc < 5) {
-        std::cout << "Faltan argumentos. Uso: programa <nombre> <puntos> <puntos_izq> <puntos_der>\n";
+    if (argc < 3) {
+        std::cout << "Faltan argumentos. Uso: programa <nombre> <puntos> <seed>\n";
         return 1;
     }
 
     std::string nombre = argv[1];
     int puntos = std::stoi(argv[2]);
-    int puntos_izq = std::stoi(argv[3]);
-    int puntos_der = std::stoi(argv[4]);
-    std::string mseed = argv[5];
+    std::string mseed = argv[3];
 
     cout << mseed << endl;
     Dataset DATOS(nombre);
@@ -59,7 +57,7 @@ int main(int argc, char* argv[]){
 
 
     ofstream result_file;
-    result_file.open("../data/result/"+std::to_string(puntos)+"_"+std::to_string(puntos_izq)+"_"+std::to_string(puntos_der)+"_"+"_seed_"+mseed+"_result_"+ std::to_string(DATOS.X.size() )+"_"+std::to_string(time(0))+"p.txt");
+    result_file.open("../data/result/"+std::to_string(puntos)+"_seed_"+mseed+".txt");
     result_file << "Time:"<< fixed << time_taken << setprecision(9) << endl;
     result_file << "Minimum Fitness:" << COALITION.bestFitness << endl;
     result_file << "N_BLOCK: " << COALITION.nBlock << " N_THREADS:" << COALITION.nThread << endl;
